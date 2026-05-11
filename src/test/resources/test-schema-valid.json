@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "description": "test schema",
+  "fields": [
+    { "name": "timestamp",          "enabled": true  },
+    { "name": "message_id",         "enabled": true  },
+    { "name": "destination_topic",  "enabled": true  },
+    { "name": "payload",            "enabled": false }
+  ]
+}

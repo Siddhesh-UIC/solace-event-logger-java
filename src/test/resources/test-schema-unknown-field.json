@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "fields": [
+    { "name": "timestamp",     "enabled": true  },
+    { "name": "made_up_field", "enabled": true  }
+  ]
+}
