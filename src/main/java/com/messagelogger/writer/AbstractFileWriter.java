@@ -74,7 +74,7 @@ public abstract class AbstractFileWriter implements MessageWriter {
         writer.newLine();
         recordsSinceFlush++;
         long now = System.currentTimeMillis();
-        if (recordsSinceFlush >= flushEveryRecords || now - lastFlushMs >= flushEveryMs) {
+        if ((flushEveryRecords > 0 && recordsSinceFlush >= flushEveryRecords) || now - lastFlushMs >= flushEveryMs) {
             doFlush();
         }
     }
@@ -83,8 +83,11 @@ public abstract class AbstractFileWriter implements MessageWriter {
         log.info("Rotating output file -> {}", filePattern.replace("{yyyyMMdd}",
             newDate.format(DateTimeFormatter.BASIC_ISO_DATE)));
         doFlush();
-        if (fsyncOnRotate) fos.getFD().sync();
-        writer.close();
+        try {
+            if (fsyncOnRotate) fos.getFD().sync();
+        } finally {
+            writer.close();
+        }
         deleteOldFiles();
         openFile(newDate);
     }
