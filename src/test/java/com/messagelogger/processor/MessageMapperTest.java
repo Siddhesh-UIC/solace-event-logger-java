@@ -53,6 +53,34 @@ class MessageMapperTest {
     }
 
     @Test
+    void parsesHttpMethodAndUriFromTopic() throws Exception {
+        Destination dest = mock(Destination.class);
+        when(dest.getName()).thenReturn("POST/api/orders/123");
+        when(msg.getDestination()).thenReturn(dest);
+        when(msg.getDeliveryMode()).thenReturn(DeliveryMode.DIRECT);
+        when(msg.getBytes()).thenReturn(new byte[0]);
+
+        MessageRecord rec = MessageMapper.map(msg, null, true);
+
+        assertEquals("POST", rec.httpMethod);
+        assertEquals("/api/orders/123", rec.httpUri);
+    }
+
+    @Test
+    void doesNotParsHttpMethodFromP2pTopic() throws Exception {
+        Destination dest = mock(Destination.class);
+        when(dest.getName()).thenReturn("#P2P/v:broker/GET/get");
+        when(msg.getDestination()).thenReturn(dest);
+        when(msg.getDeliveryMode()).thenReturn(DeliveryMode.DIRECT);
+        when(msg.getBytes()).thenReturn(new byte[0]);
+
+        MessageRecord rec = MessageMapper.map(msg, null, true);
+
+        assertNull(rec.httpMethod);
+        assertNull(rec.httpUri);
+    }
+
+    @Test
     void nullAckHandleInDirectMode() throws Exception {
         Destination dest = mock(Destination.class);
         when(dest.getName()).thenReturn("test/topic");

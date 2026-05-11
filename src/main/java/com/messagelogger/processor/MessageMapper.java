@@ -10,9 +10,13 @@ import org.slf4j.LoggerFactory;
 import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class MessageMapper {
     private static final Logger log = LoggerFactory.getLogger(MessageMapper.class);
+
+    private static final Set<String> HTTP_METHODS =
+        Set.of("GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS");
 
     /**
      * @param msg        JCSMP message received
@@ -50,6 +54,16 @@ public class MessageMapper {
         String httpMethod = safeGet(props, "http-method");
         String httpUri    = safeGet(props, "http-target-uri");
         String httpStatus = safeGet(props, "http-status-code");
+
+        // MicroGateway encodes method+path in the topic (e.g. "GET/api/orders/1").
+        // Fall back to topic parsing when user properties are absent.
+        if (httpMethod == null && destination != null && !destination.startsWith("#")) {
+            String[] parts = destination.split("/", 2);
+            if (HTTP_METHODS.contains(parts[0].toUpperCase())) {
+                httpMethod = parts[0].toUpperCase();
+                httpUri    = "/" + (parts.length > 1 ? parts[1] : "");
+            }
+        }
 
         // Payload
         byte[] raw = msg.getBytes();
