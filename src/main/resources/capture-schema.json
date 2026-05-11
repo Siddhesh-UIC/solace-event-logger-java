@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "description": "Default message capture schema for MicroGateway logging",
+  "fields": [
+    { "name": "timestamp",                     "enabled": true  },
+    { "name": "receive_timestamp",             "enabled": true  },
+    { "name": "sender_timestamp",              "enabled": false },
+    { "name": "broker_timestamp",              "enabled": true  },
+    { "name": "message_id",                    "enabled": true  },
+    { "name": "correlation_id",                "enabled": true  },
+    { "name": "replication_group_message_id",  "enabled": true  },
+    { "name": "destination_topic",             "enabled": true  },
+    { "name": "queue_name",                    "enabled": true  },
+    { "name": "delivery_mode",                 "enabled": true  },
+    { "name": "priority",                      "enabled": false },
+    { "name": "redelivered",                   "enabled": true  },
+    { "name": "dmq_eligible",                  "enabled": true  },
+    { "name": "expiration",                    "enabled": false },
+    { "name": "payload_size_bytes",            "enabled": true  },
+    { "name": "content_type",                  "enabled": true  },
+    { "name": "http_method",                   "enabled": true  },
+    { "name": "http_uri",                      "enabled": true  },
+    { "name": "http_status",                   "enabled": true  },
+    { "name": "headers",                       "enabled": true  },
+    { "name": "user_properties",               "enabled": true  },
+    { "name": "payload",                       "enabled": true  }
+  ]
+}

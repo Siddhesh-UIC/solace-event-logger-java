@@ -1,0 +1,134 @@
+# ============================================================================
+#  Service identity & versioning
+# ============================================================================
+service:
+  name: solace-message-logger
+  version: 1.0.0
+  config-version: 1               # service warns if it expects a different version
+  instance-id: ${HOSTNAME:-default-instance}
+  timezone: Asia/Kolkata
+
+# ============================================================================
+#  Solace connection
+# ============================================================================
+solace:
+  host: ${SOLACE_HOST:-tcp://broker.example.com:55555}
+  vpn: ${SOLACE_VPN:-BVPN}
+  username: ${SOLACE_USERNAME:-logger-svc}
+  password: ${SOLACE_PASSWORD}      # REQUIRED — no default, must be in env
+  client-name: ${service.name}-${service.instance-id}
+
+  connection:
+    connect-retries: 5
+    connect-retries-per-host: 3
+    reconnect-retries: -1           # -1 = infinite
+    reconnect-retry-wait-ms: 3000
+    keep-alive-interval-ms: 3000
+    keep-alive-limit: 3
+    tcp-no-delay: true
+    compression-level: 0            # 0 = off; 1-9 if WAN
+    ssl:
+      enabled: false
+      trust-store: ""
+      trust-store-password: ""
+      validate-certificate: true
+
+# ============================================================================
+#  Service operational logging  (lifecycle log)
+# ============================================================================
+logging:
+  service:
+    enabled: true
+    directory: ./logs/service
+    file-pattern: service-{yyyyMMdd}.log
+    level: ${LOG_LEVEL:-INFO}       # TRACE | DEBUG | INFO | WARN | ERROR
+    rolling: daily
+    max-size-mb: 100
+    max-history-days: 30
+    encoding: UTF-8
+    pattern: "[{timestamp}] [{level}] [{thread}] [{logger}] - {message}"
+    console-also: true
+
+# ============================================================================
+#  Service-specific section — varies per service.
+# ============================================================================
+consumer:
+  # Consumption mode: GUARANTEED (queue-bound) or DIRECT (topic-subscribed)
+  mode: GUARANTEED
+
+  # --- GUARANTEED mode settings (queue + spool-backed) ----------------------
+  guaranteed:
+    queue:
+      name: Q/microgateway/logger
+      access-type: EXCLUSIVE        # EXCLUSIVE | NON_EXCLUSIVE
+      ack-mode: CLIENT              # CLIENT | AUTO
+      max-redelivery: 5
+      flow-window-size: 255
+      transport-window-size: 255
+      start-state: ENABLED
+
+      # Provisioning: create the queue if missing?
+      provision: false              # true = create on startup if missing
+      respect-existing: true        # if provision=true and queue exists, leave it alone
+
+      # Topic subscriptions on this queue
+      subscriptions:
+        - topic: "rest/v1/>"
+          add-on-startup: false     # true = add if missing; false = assume managed externally
+        - topic: "rest/v2/>"
+          add-on-startup: false
+
+  # --- DIRECT mode settings (topic subscription, no spool) ------------------
+  direct:
+    subscriptions:
+      - "rest/v1/>"
+      - "rest/v2/>"
+
+  # --- Output writer --------------------------------------------------------
+  output:
+    enabled: true
+    directory: ./logs/messages
+    file-pattern: messages-{yyyyMMdd}.{format}
+    format: jsonl                   # log | txt | csv | jsonl
+    rolling: daily
+    max-size-mb: 500
+    max-history-days: 90
+    encoding: UTF-8
+
+    # Path to the capture-schema file — keeps the YAML tidy
+    capture-schema: ./config/capture-schema.json
+
+    # Format-specific options
+    delimited:
+      delimiter: "|"
+      quote-char: "\""
+      include-header: true          # csv only
+
+    log-format:
+      # Pattern for 'log' format. Placeholders are field names from capture-schema.
+      pattern: "{timestamp} [{delivery_mode}] topic={destination_topic} msgId={message_id} size={payload_size_bytes} method={http_method} uri={http_uri} payload={payload}"
+
+    # Flush policy
+    flush:
+      every-records: 1000
+      every-ms: 500
+      fsync-on-rotate: true
+
+    # Filtering
+    filter:
+      include-topics:
+        - ">"
+      exclude-topics:
+        - "*/heartbeat/>"
+        - "#P2P/>"
+      max-payload-bytes: 1048576    # 1 MB
+      truncate-payload: true        # if false, message is skipped entirely
+      skip-empty-payload: false
+
+  # --- Pipeline (consumer-to-writer plumbing) -------------------------------
+  pipeline:
+    consumer-threads: 1
+    writer-threads: 2
+    internal-queue-capacity: 50000
+    batch-size: 500
+    batch-timeout-ms: 100
