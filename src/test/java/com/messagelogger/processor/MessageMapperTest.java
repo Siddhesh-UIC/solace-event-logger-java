@@ -18,7 +18,7 @@ class MessageMapperTest {
     void mapsBasicFields() throws Exception {
         Destination dest = mock(Destination.class);
         when(dest.getName()).thenReturn("rest/v1/orders");
-        when(msg.getMessageId()).thenReturn("ID:abc-123");
+        when(msg.getApplicationMessageId()).thenReturn("ID:abc-123");
         when(msg.getCorrelationId()).thenReturn("CORR-1");
         when(msg.getDestination()).thenReturn(dest);
         when(msg.getDeliveryMode()).thenReturn(DeliveryMode.PERSISTENT);

@@ -91,7 +91,7 @@ public class MessageMapper {
 
         return new MessageRecord(
             now, now, senderTs, null,
-            msg.getMessageId(), msg.getCorrelationId(), rgmid,
+            msg.getApplicationMessageId(), msg.getCorrelationId(), rgmid,
             destination, queueName, deliveryMode,
             priority, String.valueOf(msg.getRedelivered()), String.valueOf(msg.isDMQEligible()),
             expiration, String.valueOf(raw != null ? raw.length : 0),
