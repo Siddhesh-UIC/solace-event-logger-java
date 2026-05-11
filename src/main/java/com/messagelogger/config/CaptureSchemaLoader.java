@@ -17,7 +17,7 @@ public class CaptureSchemaLoader {
         "destination_topic", "queue_name", "delivery_mode", "priority",
         "redelivered", "dmq_eligible", "expiration", "payload_size_bytes",
         "content_type", "http_method", "http_uri", "http_status",
-        "headers", "user_properties", "payload"
+        "headers", "user_properties", "payload", "payload_encoding"
     );
 
     public static CaptureSchema load(Path path) throws Exception {

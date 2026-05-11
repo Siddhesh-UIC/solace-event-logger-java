@@ -12,26 +12,29 @@ import java.util.stream.Collectors;
 public class CsvWriter extends AbstractFileWriter {
     private final String delimiter;
     private final boolean includeHeader;
-    private boolean headerWritten = false;
-
     public CsvWriter(OutputConfig cfg, List<CaptureSchema.FieldDefinition> enabledFields,
                      ZoneId zoneId) throws IOException {
         super(cfg, enabledFields, zoneId, "csv");
         this.delimiter     = cfg.getDelimited().getDelimiter();
         this.includeHeader = cfg.getDelimited().isIncludeHeader();
-        // Write header now that subclass fields are initialized
+        // Write initial header now that subclass fields are initialized.
         if (includeHeader) {
             writeLine(enabledFields.stream()
                 .map(CaptureSchema.FieldDefinition::getName)
                 .collect(Collectors.joining(delimiter)));
-            headerWritten = true;
         }
     }
 
     @Override
     protected void onFileOpened() throws IOException {
-        // onFileOpened is called during super() before subclass fields are set.
-        // Header writing is deferred to after the subclass constructor finishes.
+        // Called during super() (delimiter==null) and on each rotation (delimiter set).
+        // Skip the first call; on rotation write header to the new file.
+        if (delimiter == null) return;
+        if (includeHeader) {
+            writeLine(enabledFields.stream()
+                .map(CaptureSchema.FieldDefinition::getName)
+                .collect(Collectors.joining(delimiter)));
+        }
     }
 
     @Override

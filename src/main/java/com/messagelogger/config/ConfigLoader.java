@@ -55,6 +55,17 @@ public class ConfigLoader {
                 .replace("{message}",   "%msg");
             System.setProperty("LOG_PATTERN", pattern + "%n");
         }
+
+        // Logback freezes config at first logger acquisition (class-load time, before main() runs).
+        // Reset the context so the system properties set above are actually picked up.
+        try {
+            ch.qos.logback.classic.LoggerContext context =
+                (ch.qos.logback.classic.LoggerContext) org.slf4j.LoggerFactory.getILoggerFactory();
+            context.reset();
+            new ch.qos.logback.classic.util.ContextInitializer(context).autoConfig();
+        } catch (Exception e) {
+            // continue — Logback defaults remain if reset fails
+        }
     }
 
     private static void setIfNotNull(String key, String value) {

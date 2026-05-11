@@ -26,6 +26,7 @@ public class SolaceConnector {
         SolaceConfig.ConnectionConfig conn = cfg.getConnection();
         JCSMPChannelProperties channelProps = new JCSMPChannelProperties();
         channelProps.setConnectRetries(conn.getConnectRetries());
+        channelProps.setConnectRetriesPerHost(conn.getConnectRetriesPerHost());
         channelProps.setReconnectRetries(conn.getReconnectRetries());
         channelProps.setReconnectRetryWaitInMillis(conn.getReconnectRetryWaitMs());
         channelProps.setKeepAliveIntervalInMillis(conn.getKeepAliveIntervalMs());
