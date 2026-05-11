@@ -3,6 +3,7 @@ package com.messagelogger.util;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +27,15 @@ public class JsonUtil {
         return MAPPER.readTree(raw);
     }
 
-    public static String writeValueAsString(JsonNode node) throws Exception {
-        return MAPPER.writeValueAsString(node);
+    public static JsonNode readTree(String json) throws Exception {
+        return MAPPER.readTree(json);
+    }
+
+    public static String writeValueAsString(Object value) throws Exception {
+        return MAPPER.writeValueAsString(value);
+    }
+
+    public static ObjectNode createObjectNode() {
+        return MAPPER.createObjectNode();
     }
 }
