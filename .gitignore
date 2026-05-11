@@ -1,0 +1,17 @@
+.claude
+.cursorrules
+.mcp.json
+.opencode.json
+.windsurfrules
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+target/
+docs/
+local.yaml
+logs/
+*.log
+*.csv
+*.jsonl
+*.env
+data/

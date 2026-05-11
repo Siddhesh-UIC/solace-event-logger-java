@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <property name="LOG_DIR"         value="${LOG_DIR:-./logs/service}"/>
+  <property name="LOG_LEVEL"       value="${LOG_LEVEL:-INFO}"/>
+  <property name="LOG_MAX_HISTORY" value="${LOG_MAX_HISTORY:-30}"/>
+  <property name="LOG_PATTERN"     value="${LOG_PATTERN:-[%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}] [%-5level] [%thread] [%logger{30}] - %msg%n}"/>
+
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>${LOG_PATTERN}</pattern>
+    </encoder>
+  </appender>
+
+  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${LOG_DIR}/service-current.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${LOG_DIR}/service-%d{yyyyMMdd}.log</fileNamePattern>
+      <maxHistory>${LOG_MAX_HISTORY}</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <pattern>${LOG_PATTERN}</pattern>
+    </encoder>
+  </appender>
+
+  <root level="${LOG_LEVEL}">
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="FILE"/>
+  </root>
+</configuration>
