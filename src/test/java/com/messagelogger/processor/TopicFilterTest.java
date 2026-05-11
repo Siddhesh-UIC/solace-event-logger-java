@@ -43,4 +43,10 @@ class TopicFilterTest {
         assertFalse(f.accept("#P2P/QUE/some-queue"));
         assertTrue(f.accept("rest/v1/orders"));
     }
+
+    @Test
+    void rejectsNullTopic() {
+        TopicFilter f = new TopicFilter(List.of(">"), List.of());
+        assertFalse(f.accept(null));
+    }
 }

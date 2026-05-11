@@ -24,7 +24,6 @@ class MessageMapperTest {
         when(msg.getDeliveryMode()).thenReturn(DeliveryMode.PERSISTENT);
         when(msg.getRedelivered()).thenReturn(false);
         when(msg.isDMQEligible()).thenReturn(true);
-        when(msg.getAttachmentContentLength()).thenReturn(10);
         when(msg.getBytes()).thenReturn(new byte[]{'{', '}'});
 
         MessageRecord rec = MessageMapper.map(msg, "Q/test", false);
@@ -46,7 +45,6 @@ class MessageMapperTest {
         when(msg.getDestination()).thenReturn(dest);
         when(msg.getDeliveryMode()).thenReturn(DeliveryMode.DIRECT);
         when(msg.getBytes()).thenReturn(new byte[]{0x01, 0x02, 0x03});
-        when(msg.getAttachmentContentLength()).thenReturn(3);
 
         MessageRecord rec = MessageMapper.map(msg, null, true);
 

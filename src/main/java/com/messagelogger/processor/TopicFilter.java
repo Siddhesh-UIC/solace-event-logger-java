@@ -7,11 +7,12 @@ public class TopicFilter {
     private final List<String> excludePatterns;
 
     public TopicFilter(List<String> includePatterns, List<String> excludePatterns) {
-        this.includePatterns = includePatterns;
-        this.excludePatterns = excludePatterns;
+        this.includePatterns = List.copyOf(includePatterns);
+        this.excludePatterns = List.copyOf(excludePatterns);
     }
 
     public boolean accept(String topic) {
+        if (topic == null) return false;
         boolean included = includePatterns.isEmpty() ||
             includePatterns.stream().anyMatch(p -> matches(topic, p));
         if (!included) return false;

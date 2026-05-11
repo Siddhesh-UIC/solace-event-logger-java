@@ -37,7 +37,9 @@ public class MessageMapper {
             try {
                 ReplicationGroupMessageId rgmidObj = msg.getReplicationGroupMessageId();
                 if (rgmidObj != null) rgmid = rgmidObj.toString();
-            } catch (Exception ignored) {}
+            } catch (Exception e) {
+                log.debug("Could not read replication group message id: {}", e.getMessage());
+            }
         }
 
         // User properties (SDT map)
@@ -57,8 +59,8 @@ public class MessageMapper {
             payload = null;
         } else {
             try {
-                JsonNode node = JsonUtil.MAPPER.readTree(raw);
-                payload = JsonUtil.MAPPER.writeValueAsString(node);
+                JsonNode node = JsonUtil.readTree(raw);
+                payload = JsonUtil.writeValueAsString(node);
             } catch (Exception e) {
                 payload = Base64.getEncoder().encodeToString(raw);
                 payloadEncoding = "base64";
@@ -92,7 +94,7 @@ public class MessageMapper {
             msg.getMessageId(), msg.getCorrelationId(), rgmid,
             destination, queueName, deliveryMode,
             priority, String.valueOf(msg.getRedelivered()), String.valueOf(msg.isDMQEligible()),
-            expiration, String.valueOf(msg.getAttachmentContentLength()),
+            expiration, String.valueOf(raw != null ? raw.length : 0),
             httpContentType, httpMethod, httpUri, httpStatus,
             headers, userProps, payload, payloadEncoding,
             ackHandle
