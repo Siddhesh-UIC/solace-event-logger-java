@@ -6,3 +6,10 @@
 AGENTS.md
 CLAUDE.md
 GEMINI.md
+target/
+docs/
+logs/
+*.log
+*.csv
+*.jsonl
+*.env
