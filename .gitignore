@@ -14,3 +14,4 @@ logs/
 *.csv
 *.jsonl
 *.env
+data/
