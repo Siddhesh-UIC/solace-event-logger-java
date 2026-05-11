@@ -86,6 +86,7 @@ public class MessageRecord {
             case "headers"                      -> headers;
             case "user_properties"              -> userProperties;
             case "payload"                      -> payload;
+            case "payload_encoding"             -> payloadEncoding;
             default                             -> null;
         };
     }
