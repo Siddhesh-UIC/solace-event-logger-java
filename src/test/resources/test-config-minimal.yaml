@@ -1,0 +1,19 @@
+service:
+  name: test-logger
+  instance-id: test-01
+  timezone: UTC
+solace:
+  host: tcp://localhost:55555
+  vpn: TEST
+  username: test-user
+  password: test-pass
+  client-name: test-logger-test-01
+logging:
+  service:
+    level: DEBUG
+    directory: ./logs/service
+consumer:
+  mode: GUARANTEED
+  output:
+    format: jsonl
+    capture-schema: ./config/capture-schema.json
