@@ -8,6 +8,7 @@ CLAUDE.md
 GEMINI.md
 target/
 docs/
+local.yaml
 logs/
 *.log
 *.csv
