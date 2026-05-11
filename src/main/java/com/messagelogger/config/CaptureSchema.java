@@ -29,6 +29,7 @@ public class CaptureSchema {
     }
 
     public List<FieldDefinition> enabledFields() {
+        if (fields == null) return List.of();
         return fields.stream().filter(FieldDefinition::isEnabled).toList();
     }
 
