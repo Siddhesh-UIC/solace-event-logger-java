@@ -23,6 +23,7 @@
     { "name": "http_status",                   "enabled": true  },
     { "name": "headers",                       "enabled": true  },
     { "name": "user_properties",               "enabled": true  },
-    { "name": "payload",                       "enabled": true  }
+    { "name": "payload",                       "enabled": true  },
+    { "name": "payload_encoding",              "enabled": false }
   ]
 }

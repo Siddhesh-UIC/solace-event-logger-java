@@ -51,8 +51,6 @@ public class MessageLoggerApp {
         ConsumerFactory consumerFactory = new ConsumerFactory();
         consumerFactory.start(cfg, session, pipeline, filter);
 
-        log.info("Service ready");
-
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             log.info("Shutdown signal received");
             try {
@@ -68,6 +66,8 @@ public class MessageLoggerApp {
                 log.error("Error during shutdown: {}", e.getMessage());
             }
         }, "shutdown-hook"));
+
+        log.info("Service ready");
     }
 
     private static String resolveConfigPath(String[] args) {
