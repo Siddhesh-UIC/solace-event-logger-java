@@ -52,6 +52,9 @@ public class DirectConsumer {
     }
 
     public void stop() {
-        if (consumer != null) consumer.stop();
+        if (consumer != null) {
+            consumer.stop();
+            consumer.close();
+        }
     }
 }

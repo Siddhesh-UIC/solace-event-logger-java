@@ -23,6 +23,8 @@ public class ConsumerFactory {
                                             pipeline, filter);
                 direct.start();
             }
+            default -> throw new IllegalArgumentException(
+                "Unknown consumer mode: " + cfg.getConsumer().getMode());
         }
     }
 

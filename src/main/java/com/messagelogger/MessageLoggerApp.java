@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 public class MessageLoggerApp {
     private static final Logger log = LoggerFactory.getLogger(MessageLoggerApp.class);
@@ -51,6 +52,8 @@ public class MessageLoggerApp {
         ConsumerFactory consumerFactory = new ConsumerFactory();
         consumerFactory.start(cfg, session, pipeline, filter);
 
+        CountDownLatch shutdownLatch = new CountDownLatch(1);
+
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             log.info("Shutdown signal received");
             try {
@@ -64,10 +67,13 @@ public class MessageLoggerApp {
                 log.info("Service stopped");
             } catch (Exception e) {
                 log.error("Error during shutdown: {}", e.getMessage());
+            } finally {
+                shutdownLatch.countDown();
             }
         }, "shutdown-hook"));
 
         log.info("Service ready");
+        shutdownLatch.await();
     }
 
     private static String resolveConfigPath(String[] args) {
