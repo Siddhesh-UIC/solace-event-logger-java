@@ -44,10 +44,10 @@ public class CsvWriter extends AbstractFileWriter {
     }
 
     private String quote(String value) {
-        if (value == null) return "\"\"";
+        if (value == null) return "";
         if (value.contains(delimiter) || value.contains("\"") || value.contains("\n")) {
             return "\"" + value.replace("\"", "\"\"") + "\"";
         }
-        return "\"" + value + "\"";
+        return value;
     }
 }
