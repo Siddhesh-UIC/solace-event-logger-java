@@ -50,18 +50,21 @@ public class MessageMapper {
         SDTMap props = msg.getProperties();
         String userProps = serializeUserProperties(props);
 
-        // HTTP-injected user properties from MicroGateway
-        String httpMethod = safeGet(props, "http-method");
-        String httpUri    = safeGet(props, "http-target-uri");
-        String httpStatus = safeGet(props, "http-status-code");
+        // Solace JMS-mapped HTTP properties set by the MicroGateway/RDP
+        String httpMethod = safeGet(props, "JMS_Solace_HTTP_method");
+        String httpUri    = safeGet(props, "JMS_Solace_HTTP_target_path_query_verbatim");
+        String httpStatus = safeGet(props, "JMS_Solace_HTTP_status_code");
 
-        // MicroGateway encodes method+path in the topic (e.g. "GET/api/orders/1").
+        // Normalise URI to always start with "/"
+        if (httpUri != null && !httpUri.startsWith("/")) httpUri = "/" + httpUri;
+
+        // MicroGateway also encodes method+path in the topic (e.g. "GET/api/orders/1").
         // Fall back to topic parsing when user properties are absent.
         if (httpMethod == null && destination != null && !destination.startsWith("#")) {
             String[] parts = destination.split("/", 2);
             if (HTTP_METHODS.contains(parts[0].toUpperCase())) {
                 httpMethod = parts[0].toUpperCase();
-                httpUri    = "/" + (parts.length > 1 ? parts[1] : "");
+                if (httpUri == null) httpUri = "/" + (parts.length > 1 ? parts[1] : "");
             }
         }
 
