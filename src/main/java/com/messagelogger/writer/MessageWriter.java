@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface MessageWriter {
     void write(List<MessageRecord> batch) throws IOException;
-    void flush() throws IOException;
-    void close() throws IOException;
+    default void flush() throws IOException {}
+    default void close() throws IOException {}
 }
